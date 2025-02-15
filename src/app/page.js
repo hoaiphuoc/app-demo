@@ -1,95 +1,142 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+"use client";
 
-export default function Home() {
+import DayColumn from "@/components/day-column";
+import Workout from "@/components/workout";
+import { DAYS_OF_WEEK, SAMPLE_DATA } from "@/constant/sampleData";
+import {
+  defaultDropAnimationSideEffects,
+  DndContext,
+  DragOverlay,
+  KeyboardSensor,
+  MeasuringStrategy,
+  PointerSensor,
+  useSensor,
+  useSensors
+} from "@dnd-kit/core";
+import { sortableKeyboardCoordinates } from "@dnd-kit/sortable";
+import { useState } from "react";
+import styles from "./page.module.scss";
+
+function Home() {
+  const [data, setData] = useState(SAMPLE_DATA);
+  const [workoutActive, setworkoutActive] = useState(null);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  const dropAnimation = {
+    sideEffects: defaultDropAnimationSideEffects({
+      styles: {
+        active: {
+          opacity: "0.5",
+        },
+      },
+    }),
+  };
+
+  const handleDragStart = (event) => {
+    const { active } = event;
+    const matchedWorkout = data.find(({ id }) => id === active.id);
+    setworkoutActive(matchedWorkout);
+  };
+
+  const handleDragOver = (event) => {
+    const { active, over } = event;
+    if (active.id !== over.id) {
+      console.log("🚀 ~ handleDragOver ~ over.id:", over.id);
+      console.log("🚀 ~ handleDragOver ~ active.id :", active.id);
+      if (DAYS_OF_WEEK.includes(over.id)) {
+        setData((prevData) => {
+          const newData = prevData.map((workout) => {
+            return active.id == workout.id
+              ? { ...workout, day: over.id }
+              : workout;
+          });
+          return newData;
+        });
+      }
+    }
+  };
+
+  const handleDragEnd = (event) => {
+    const { active, over } = event;
+    if (active.id !== over.id) {
+      if (DAYS_OF_WEEK.includes(over.id)) {
+        if (DAYS_OF_WEEK.includes(over.id)) {
+          setData((prevData) => {
+            const newData = prevData.map((workout) => {
+              return active.id == workout.id
+                ? { ...workout, day: over.id }
+                : workout;
+            });
+            return newData;
+          });
+        }
+      } else {
+        const posNew = data.find(({ id }) => id === over.id).position;
+        const posOld = data.find(({ id }) => id === active.id).position;
+        setData((prevData) => {
+          const newData = prevData.map((workout) => {
+            switch (workout.id) {
+              case active.id:
+                return { ...workout, position: posNew };
+              case over.id:
+                return { ...workout, position: posOld };
+              default:
+                return workout;
+            }
+          });
+          return newData;
+        });
+      }
+    }
+  };
+
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol>
-          <li>
-            Get started by editing <code>src/app/page.js</code>.
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
+    <main className={styles.main}>
+      <DndContext
+        sensors={sensors}
+        onDragStart={handleDragStart}
+        onDragOver={handleDragOver}
+        onDragEnd={handleDragEnd}
+        measuring={{
+          droppable: {
+            strategy: MeasuringStrategy.Always,
+          },
+        }}
+      >
+        {DAYS_OF_WEEK.map((day) => (
+          <DayColumn
+            day={day}
+            key={day}
+            workoutActive={workoutActive}
+            data={data
+              .filter(({ day: _day }) => _day === day)
+              .sort((a, b) => a.position - b.position)}
+            setData={setData}
+          />
+        ))}
+        <DragOverlay
+          adjustScale={false}
+          dropAnimation={dropAnimation}
+          style={{ cursor: "move" }}
+        >
+          {workoutActive ? (
+            <Workout
+              id={workoutActive.id}
+              name={workoutActive.name}
+              exercises={workoutActive.exercises}
+              setData={setData}
             />
-            Deploy now
-          </a>
-          <a
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.secondary}
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className={styles.footer}>
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+          ) : null}
+        </DragOverlay>
+      </DndContext>
+    </main>
   );
 }
+
+export default Home;

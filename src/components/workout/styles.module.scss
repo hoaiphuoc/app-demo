@@ -1,0 +1,33 @@
+@import '@/scss/mixin';
+
+.workout {
+  padding: 5px 0;
+  border-radius: 6px;
+  border: 1px solid #22242626;
+  background-color: #f3f5f8;
+  .heading {
+    margin: 0 7px;
+    @include flex(center, space-between);
+    > h3 {
+      font-size: 10px;
+      font-weight: 700;
+      line-height: 13.62px;
+      color: $purple;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      text-transform: uppercase;
+    }
+    > div {
+      cursor: move;
+    }
+  }
+  .addBtn {
+    @include flex(center, flex-end);
+    margin-inline-end: 7px;
+    margin-top: 5px;
+    > button {
+      @include clearDefaultBtn()
+    }
+  }
+}

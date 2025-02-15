@@ -1,0 +1,14 @@
+@import 'variables';
+
+@mixin flex($align-item, $justify-content) {
+  display: flex;
+  align-items: $align-item;
+  justify-content: $justify-content;
+}
+
+@mixin clearDefaultBtn() {
+  border: none;
+  outline: none;
+  background: none;
+  cursor: pointer;
+}

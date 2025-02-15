@@ -1,0 +1,75 @@
+@import '@/scss/mixin';
+
+.cover {
+  inset:  0;
+  position: fixed;
+  @include flex(center, center);
+  background-color: rgba(0, 0, 0, 0.5);
+  .modal {
+    width: 448px;
+    padding: 24px;
+    border-radius: 6px;
+    background-color: $white;
+    .headerModal {
+      @include flex(center, center);
+      > h3 {
+        font-size: 20px;
+        font-weight: 700;
+        line-height: 28px;
+      }
+      .closeBtn {
+        @include clearDefaultBtn()
+      }
+    }
+    .bodyModal {
+      display: grid;
+      row-gap: 16px;
+      margin: 24px 0;
+      .group {
+        display: grid;
+        column-gap: 16px;
+        grid-template-columns: 1fr 1fr;
+      }
+      .inputContainer {
+        display: flex;
+        flex-direction: column;
+        row-gap: 8px;
+        > label {
+          color: $black;
+          font-size: 16px;
+          font-weight: 500;
+          line-height: 25px;
+        }
+        > input {
+          height: 48px;
+          font-size: 16px;
+          padding: 8px 12px;
+          border-radius: 6px;
+          border: 1px solid #DFDFDF;
+        }
+      }
+    }
+    .footerModal {
+      @include flex(center, flex-end);
+      column-gap: 12px;
+      .cancelBtn {
+        height: 38px;
+        padding: 8px 16px;
+        cursor: pointer;
+        border-radius: 6px;
+        background-color: $white;
+        color: rgb(55, 65, 81);
+        border: 1px solid rgb(209, 213, 219);
+      }
+      .addBtn {
+        height: 38px;
+        padding: 8px 16px;
+        cursor: pointer;
+        border-radius: 6px;
+        background-color: $black;
+        color: $white;
+        border: 1px solid $black;
+      }
+    }
+  }
+}

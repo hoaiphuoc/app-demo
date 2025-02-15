@@ -1,0 +1,41 @@
+@import '@/scss/mixin';
+
+.dayColumn {
+  width: 100%;
+  > p {
+    font-size: 10px;
+    font-weight: 600;
+    color: #6A7988;
+    margin-bottom: 10px;
+  }
+  .workoutSection {
+    border-radius: 6px;
+    background-color: #F3F5F8;
+    min-height: 100%;
+    min-height: calc(100vh - 142px);
+    padding: 10px;
+    .top {
+      padding-bottom: 4px;
+      @include flex(center, space-between);
+      .addBtn {
+        @include clearDefaultBtn()
+      }
+      > span {
+        font-size: 11px;
+        font-weight: 600;
+        line-height: 14.98px;
+      }
+      .day {
+        color: #728096;
+      }
+      .today {
+        color: $purple;
+      }
+    }
+    .content {
+      display: flex;
+      flex-direction: column;
+      row-gap: 5px;
+    }
+  }
+}
